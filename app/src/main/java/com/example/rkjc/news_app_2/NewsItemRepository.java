@@ -81,32 +81,24 @@ public class NewsItemRepository {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //news = JsonUtils.parseNews(searchResults);
-            //Log.d("mycode", searchResults);
-            Log.d("mycode","SHIT1");
 
-            if(searchResults != null && !searchResults.equals("")){
-                //Log.d("mycode","SOMETHING'S IN HERE");
-                mAsyncTaskDao.clearAll();
 
-                ArrayList<NewsItem> news = JsonUtils.parseNews(searchResults);
-
-                mAsyncTaskDao.insert(news);
-                mAsyncTaskDao.loadAllNewsItems();
-                Log.d("mycode","SHIT22");
-            }
-            else{
-                //syncMyShit shit = new syncMyShit(mAsyncTaskDao);
-                mAsyncTaskDao.loadAllNewsItems();
-                Log.d("mycode","SHIT33");
-
-            }
-            //mAsyncTaskDao.loadAllNewsItems();
-
+//            if(searchResults != null && !searchResults.equals("")){
+//                mAsyncTaskDao.clearAll();
+//
+//                ArrayList<NewsItem> news = JsonUtils.parseNews(searchResults);
+//
+//                mAsyncTaskDao.insert(news);
+//                mAsyncTaskDao.loadAllNewsItems();
+//            }
+//            else{
+            new syncMyShit(mAsyncTaskDao);
+//            }
+//
             return null;
         }
 
-//        @Override
+        //        @Override
 //        protected void onPostExecute(String searchResults) {
 //            //Log.d("mycode",searchResults);
 //

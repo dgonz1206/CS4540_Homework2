@@ -60,21 +60,14 @@ public class MainActivity extends AppCompatActivity {
             NewsItemRepository nip = new NewsItemRepository(getApplication());
             mNewsItemViewModel.loadAllNewsItems().observe(this, new Observer<List<NewsItem>>() {
                 @Override
-                public void onChanged(@Nullable final List<NewsItem> words) {
+                public void onChanged(@Nullable final List<NewsItem> news) {
                     // Update the cached copy of the words in the adapter.
-                    mAdapter.setWords(words);
-                    //Log.d("mycode", words.toString());
+                    mAdapter.setNews(news);
                 }
             });
-            ArrayList<NewsItem> result = new ArrayList<>();
 
-            //if(mAdapter.getItemCount()==0){
-            result = nip.parseIntoDao(this);
-            //}
-            //ArrayList<NewsItem> ls = nip.parseIntoDao(this);
-            //Log.d("mycode", mAdapter.getItemCount()+"");
+            nip.parseIntoDao(this);
 
-            //Log.d("mycode", result.toString());
             return true;
         }
         return super.onOptionsItemSelected(item);
