@@ -3,10 +3,8 @@ package com.example.rkjc.news_app_2;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,7 +15,6 @@ public class NewsItemRepository {
 
     private NewsItemDao mNewsItemDao;
     private LiveData<List<NewsItem>> mAllNewsItems;
-    //private ArrayList<NewsItem> urlStuff;
 
     NewsItemRepository(Application application) {
         NewsItemDatabase db = NewsItemDatabase.getDatabase(application);
@@ -39,34 +36,22 @@ public class NewsItemRepository {
         new clearAllAsyncTask(mNewsItemDao).execute(newsItem);
     }
 
-    public void impossible(List<NewsItem> newsItem){
 
-    }
-
-    public ArrayList<NewsItem> parseIntoDao(Context context) {
+    public ArrayList<NewsItem> syncDbAPI(Context context) {
         ArrayList<NewsItem> result = null;
         URL url = NetworkUtils.buildUrl();
-        String searchResults = null;
-        Log.d("mycode2", "FUUUUUUUUUUCK");
-
-        ArrayList<NewsItem> news = new ArrayList<NewsItem>();
-        syncMyShit shit = new syncMyShit(mNewsItemDao);
         apiCall api = new apiCall(mNewsItemDao);
         api.execute(url);
-        //result = api.getItem();
-        Log.d("mycode2", mNewsItemDao.toString());
-        //Log.d("mycode2", result.toString());
 
         return result;
     }
 
-
+    public void fetchDatabaseNews() {
+        new databaseASync(mNewsItemDao);
+    }
 
     private static class apiCall extends AsyncTask<URL, NewsItemDao, String> {
-        //URL url = NetworkUtils.buildUrl();
         String searchResults = null;
-        //private NewsItemDao mAsyncTaskDao;
-        ArrayList<NewsItem> result = new ArrayList<>();
         ArrayList<NewsItem> news= new ArrayList<>();
 
         private NewsItemDao mAsyncTaskDao;
@@ -83,52 +68,33 @@ public class NewsItemRepository {
             }
 
 
-//            if(searchResults != null && !searchResults.equals("")){
-//                mAsyncTaskDao.clearAll();
-//
-//                ArrayList<NewsItem> news = JsonUtils.parseNews(searchResults);
-//
-//                mAsyncTaskDao.insert(news);
-//                mAsyncTaskDao.loadAllNewsItems();
-//            }
-//            else{
-            new syncMyShit(mAsyncTaskDao);
-//            }
-//
+            if(searchResults != null && !searchResults.equals("")){
+
+                mAsyncTaskDao.clearAll();
+                ArrayList<NewsItem> news = JsonUtils.parseNews(searchResults);
+                mAsyncTaskDao.insert(news);
+                mAsyncTaskDao.loadAllNewsItems();
+            }
             return null;
         }
 
-        //        @Override
-//        protected void onPostExecute(String searchResults) {
-//            //Log.d("mycode",searchResults);
-//
-//            if(searchResults != null && !searchResults.equals("")){
-//                Log.d("mycode","SOMETHING'S IN HERE");
-//
-//                //Log.d("mycode","SHIT");
-//            }
-//
-//        }
-        private ArrayList<NewsItem> getItem(){
-            //Log.d("mycode", result.toString());
 
+        private ArrayList<NewsItem> getItem(){
             return news;
         }
     }
 
 
-    private static class syncMyShit extends AsyncTask<List<NewsItem>, Void, Void> {
+    private static class databaseASync extends AsyncTask<List<NewsItem>, Void, Void> {
 
         private NewsItemDao mAsyncTaskDao;
 
-        syncMyShit(NewsItemDao dao) {
+        databaseASync(NewsItemDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
         protected Void doInBackground(final List<NewsItem>... params) {
-
-            //mAsyncTaskDao.insert(news);
 
             mAsyncTaskDao.loadAllNewsItems();
             return null;
@@ -148,7 +114,6 @@ public class NewsItemRepository {
         protected Void doInBackground(final List<NewsItem>... params) {
 
             mAsyncTaskDao.insert(params[0]);
-            //Log.d("TAB", mAsyncTaskDao.toString());
             return null;
         }
     }
@@ -161,7 +126,6 @@ public class NewsItemRepository {
 
         @Override
         protected Void doInBackground(final List<NewsItem>... params) {
-            Log.d("mycode", "deleting word: " + params[0].toString());
             mAsyncTaskDao.clearAll();
             return null;
         }
